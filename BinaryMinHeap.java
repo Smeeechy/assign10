@@ -37,40 +37,54 @@ public class BinaryMinHeap<E extends Comparable<? super E>> implements PriorityQ
 
     @SuppressWarnings("unchecked")
     private E get(int index) {
+        if (index > size) {
+            return null;
+        }
         return (E) array[index];
     }
 
     private void buildHeap(List<? extends E> list) {
-        for (int i = 1; i < list.size(); i++) array[i] = list.get(i - 1);
+        for (int i = 1; i <= list.size(); i++) array[i] = list.get(i - 1);
+        heapify();
+    }
+    private void heapify() {
+        for (int i = size; i > 0; i--) {
+            percolateDown(i);
+        }
     }
 
-    private void percolateUp() {
+    private void percolateUp(int index) {
         if (size < 2) return;
-        int index = size;
-        while (index > 1) {
-            E current = get(index);
-            E parent = get(parent(index));
-            if (innerCompare(current, parent) < 0) {
-                swap(index, parent(index));
-            } else break;
+        E current = get(index);
+        E parent = get(parent(index));
+        if (parent != null && innerCompare(current, parent) < 0) {
+            swap(index, parent(index));
         }
+
     }
 
-    private void percolateDown() {
+    private void percolateDown(int index) {
         // find the smaller child
-        int index = 1;
-        while (true) {
-            E current = get(index);
-            E left = get(left(index));
-            E right = get(right(index));
-            if (innerCompare(current, left) > 0 && innerCompare(current, right) > 0) {
-                // swap with smaller child
-                if (innerCompare(left, right) < 0) swap(index, left(index));
-                else swap(index, right(index));
-            } else if (innerCompare(current, left) > 0) swap(index, left(index));
-            else if (innerCompare(current, right) > 0) swap(index, right(index));
-            else break;
+        E current = get(index);
+        E left = get(left(index));
+        E right = get(right(index));
+        if (right != null && left != null && innerCompare(current, left) > 0 && innerCompare(current, right) > 0) {
+            // swap with smaller child
+            if (innerCompare(left, right) < 0) {
+                swap(index, left(index));
+                percolateDown(left(index));
+            } else {
+                swap(index, right(index));
+                percolateDown(right(index));
+            }
+        } else if (left != null && innerCompare(current, left) > 0) {
+            swap(index, left(index));
+            percolateDown(left(index));
+        } else if (right != null && innerCompare(current, right) > 0) {
+            swap(index, right(index));
+            percolateDown(right(index));
         }
+
     }
 
     private int innerCompare(E first, E second) {
@@ -105,7 +119,7 @@ public class BinaryMinHeap<E extends Comparable<? super E>> implements PriorityQ
     @Override
     public void add(E element) {
         array[++size] = element;
-        percolateUp();
+        percolateUp(size);
     }
 
     /**
@@ -134,7 +148,7 @@ public class BinaryMinHeap<E extends Comparable<? super E>> implements PriorityQ
         E min = get(1);
         array[1] = array[size];
         array[size--] = null;
-        percolateDown();
+        percolateDown(1);
         return min;
     }
 

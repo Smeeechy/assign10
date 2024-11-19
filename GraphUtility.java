@@ -1,9 +1,6 @@
 package assign10;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Solves the shortest path problem for a generic, directed, weighted, sparse graphs
@@ -193,12 +190,43 @@ public class GraphUtility {
 			
 			throw new IllegalArgumentException("There is no path between vertex " + startData + " and vertex " + startData + ".");
 		}
-		
+		// TODO: add Javadoc comment.
 		public List<Type> shortestWeightedPathWithPriorityQueue(Type startData, Type endData) {
-			// TODO: Fill in and add Javadoc comment.
-			return null;
+
+			Vertex<Type> start = vertices.get(startData);
+			if (start == null) throw new IllegalArgumentException("startValue does not exist");
+			if (!vertices.containsKey(endData)) throw new IllegalArgumentException("targetValue does not exist");
+
+			PriorityQueue<Vertex<Type>> notVisited = new BinaryMinHeap<>();
+			for (Vertex<Type> value : vertices.values()) {
+				value.distanceFromStart = Integer.MAX_VALUE;
+				notVisited.add(value);
+			}
+			start.distanceFromStart = 0;
+//			notVisited.sort(Comparator.comparing(Vertex::distanceFromStart, Comparator.reverseOrder()));
+			while(!notVisited.isEmpty()){
+
+				Vertex<Type> minVertex = notVisited.extract();
+				for(Edge<Type> edge : minVertex.adjacencyList){
+					Vertex<Type> adjacent = edge.destination;
+					double currentDistance = minVertex.distanceFromStart + edge.weight;
+					if( currentDistance < adjacent.distanceFromStart){
+						adjacent.distanceFromStart = currentDistance;
+						adjacent.previous = minVertex;
+					}
+				}
+			}
+			return generatePath(vertices.get(endData), startData);
 		}
-		
+		/**
+		 * Finds the shortest path from the startValue to the endValue, if it exists.
+		 *
+		 * @param startValue the value of the vertex from which to start the search
+		 * @param targetValue the value of the target vertex
+		 * @return the shortest path between startValue and endValue
+		 * @throws IllegalArgumentException if the Graph does not contain the start or target values
+		 */
+
 		/**
 		 * Generates an ordered list of data for the vertices that make up the path defined by 
 		 * each vertex's "previous" attribute.
