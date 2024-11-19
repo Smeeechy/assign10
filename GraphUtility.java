@@ -29,11 +29,25 @@ public class GraphUtility {
 			List<Double> weights, Type srcData, Type dstData) throws IllegalArgumentException {
 		return buildGraph(sources, destinations, weights).shortestWeightedPathWithSorting(srcData, dstData);
 	}
-	
-	public static <Type> List<Type> shortestWeightedPathWithPriorityQueue(List<Type> sources, List<Type> destinations, 
+
+	/**
+	 * Gets the shortest weighted path from one vertex (starting vertex) to another
+	 * (ending vertex) in a directed graph defined by the given lists.
+	 *
+	 * Uses the version of Dijkstra's algorithm implemented with a PriorityQueue.
+	 *
+	 * @param sources - list of data for the source vertices of edges in the graph being defined
+	 * @param destinations - list of data for the destination vertices of edges in the graph being defined
+	 * @param weights - list of weights for the edges in the graph being defined
+	 * @param srcData - data of the starting vertex of the path being sought
+	 * @param dstData - data of the ending vertex of the path being sought
+	 * @return ordered list of data for the vertices that make up the shortest weighted path
+	 * @throws IllegalArgumentException if any of the given lists are ill-formatted or there is no such path
+	 */
+
+	public static <Type> List<Type> shortestWeightedPathWithPriorityQueue(List<Type> sources, List<Type> destinations,
 			List<Double> weights, Type srcData, Type dstData) throws IllegalArgumentException {
-		// TODO: Fill in and add Javadoc comment.
-		return null;
+		return buildGraph(sources, destinations, weights).shortestWeightedPathWithPriorityQueue(srcData, dstData);
 	}
 	
 	/**
@@ -190,33 +204,38 @@ public class GraphUtility {
 			
 			throw new IllegalArgumentException("There is no path between vertex " + startData + " and vertex " + startData + ".");
 		}
+
 		// TODO: add Javadoc comment.
 		public List<Type> shortestWeightedPathWithPriorityQueue(Type startData, Type endData) {
+			Vertex<Type> startingVertex = vertices.get(startData);
+			if(startingVertex == null)
+				throw new IllegalArgumentException("Vertex " + startData + " does not exist.");
+			Vertex<Type> endingVertex = vertices.get(endData);
+			if(endingVertex == null)
+				throw new IllegalArgumentException("Vertex " + endData + " does not exist.");
 
-			Vertex<Type> start = vertices.get(startData);
-			if (start == null) throw new IllegalArgumentException("startValue does not exist");
-			if (!vertices.containsKey(endData)) throw new IllegalArgumentException("targetValue does not exist");
+			PriorityQueue<Vertex<Type>> unvisitedVertices = new BinaryMinHeap<>(Comparator.comparingDouble(vertex -> vertex.distanceFromStart));
+			for(Vertex<Type> v : vertices.values())
+				unvisitedVertices.add(v);
+			startingVertex.distanceFromStart = 0;
 
-			PriorityQueue<Vertex<Type>> notVisited = new BinaryMinHeap<>();
-			for (Vertex<Type> value : vertices.values()) {
-				value.distanceFromStart = Integer.MAX_VALUE;
-				notVisited.add(value);
-			}
-			start.distanceFromStart = 0;
-//			notVisited.sort(Comparator.comparing(Vertex::distanceFromStart, Comparator.reverseOrder()));
-			while(!notVisited.isEmpty()){
-
-				Vertex<Type> minVertex = notVisited.extract();
-				for(Edge<Type> edge : minVertex.adjacencyList){
-					Vertex<Type> adjacent = edge.destination;
-					double currentDistance = minVertex.distanceFromStart + edge.weight;
-					if( currentDistance < adjacent.distanceFromStart){
-						adjacent.distanceFromStart = currentDistance;
-						adjacent.previous = minVertex;
+			while(!unvisitedVertices.isEmpty()) {
+				Vertex<Type> currentVertex = unvisitedVertices.peek();
+				if(currentVertex.data.equals(endData))
+					return generatePath(endingVertex, startData);
+				for(Edge<Type> e : currentVertex.adjacencyList)
+					if(currentVertex.distanceFromStart + e.weight < e.destination.distanceFromStart) {
+						e.destination.distanceFromStart = currentVertex.distanceFromStart + e.weight;
+						e.destination.previous = currentVertex;
 					}
-				}
+				unvisitedVertices.extract();
 			}
-			return generatePath(vertices.get(endData), startData);
+
+			throw new IllegalArgumentException("There is no path between vertex " + startData + " and vertex " + startData + ".");
+		}
+
+		public static void main(String[] args) {
+
 		}
 		/**
 		 * Finds the shortest path from the startValue to the endValue, if it exists.

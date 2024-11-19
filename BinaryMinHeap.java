@@ -4,7 +4,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class BinaryMinHeap<E extends Comparable<? super E>> implements PriorityQueue<E> {
+/**
+ *  Class representing PriorityQueue as a BinaryMinHeap backed by a primitive array
+ *
+ *  @author Joey Sidwell and Daryn Smith
+ *  @version November 19, 2024
+ */
+
+public class BinaryMinHeap<E> implements PriorityQueue<E> {
     private Object[] array;
     private int size;
     private Comparator<? super E> cmp;
@@ -35,6 +42,12 @@ public class BinaryMinHeap<E extends Comparable<? super E>> implements PriorityQ
         buildHeap(list);
     }
 
+    /**
+     * Gets an item in an array with an index and casts an object to E
+     *
+     * @param index index of item in array
+     * @return item at given index
+     */
     @SuppressWarnings("unchecked")
     private E get(int index) {
         if (index > size) {
@@ -43,16 +56,30 @@ public class BinaryMinHeap<E extends Comparable<? super E>> implements PriorityQ
         return (E) array[index];
     }
 
+    /**
+     * Populates backing array using a list
+     *
+     * @param list list of elements to add to backing array
+     */
     private void buildHeap(List<? extends E> list) {
         for (int i = 1; i <= list.size(); i++) array[i] = list.get(i - 1);
         heapify();
     }
+
+    /**
+     * Insures heap property for backing array
+     */
     private void heapify() {
         for (int i = size; i > 0; i--) {
             percolateDown(i);
         }
     }
 
+    /**
+     * Places elements at correct position by iteratively comparing to parent
+     *
+     * @param index index of item to re-position
+     */
     private void percolateUp(int index) {
         if (size < 2) return;
         E current = get(index);
@@ -63,6 +90,11 @@ public class BinaryMinHeap<E extends Comparable<? super E>> implements PriorityQ
 
     }
 
+    /**
+     * Places elements at correct position by iteratively comparing to children
+     *
+     * @param index index of item to re-position
+     */
     private void percolateDown(int index) {
         // find the smaller child
         E current = get(index);
@@ -87,11 +119,24 @@ public class BinaryMinHeap<E extends Comparable<? super E>> implements PriorityQ
 
     }
 
+    /**
+     * Compares two elements
+     *
+     * @param first first element to compare
+     * @param second second element to compare
+     * @return value of comparison
+     */
+    @SuppressWarnings("unchecked")
     private int innerCompare(E first, E second) {
         if (this.cmp != null) return cmp.compare(first, second);
-        else return first.compareTo(second);
+        else return ((Comparable<? super E>) first).compareTo(second);
     }
 
+    /**
+     * Gets parent
+     * @param index
+     * @return
+     */
     private int parent(int index) {
         return index / 2;
     }
