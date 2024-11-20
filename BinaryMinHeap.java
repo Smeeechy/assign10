@@ -133,22 +133,41 @@ public class BinaryMinHeap<E> implements PriorityQueue<E> {
     }
 
     /**
-     * Gets parent
-     * @param index
-     * @return
+     * Gets index of parent element
+     *
+     * @param index the index of the element whose parent we need to find
+     * @return the index of the parent element
      */
     private int parent(int index) {
         return index / 2;
     }
 
+    /**
+     * Finds the index of the left child
+     *
+     * @param index the index of the parent element
+     * @return the index of the child
+     */
     private int left(int index) {
         return index * 2;
     }
 
+    /**
+     * Finds the index of the right child
+     *
+     * @param index the index of the parent element
+     * @return the index of the child
+     */
     private int right(int index) {
         return index * 2 + 1;
     }
 
+    /**
+     * Helper method for swapping two elements in the backing array.
+     *
+     * @param i the index of the first element to swap
+     * @param j the index of the second element to swap
+     */
     private void swap(int i, int j) {
         E temp = get(i);
         array[i] = array[j];

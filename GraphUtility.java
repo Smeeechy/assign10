@@ -6,7 +6,7 @@ import java.util.*;
  * Solves the shortest path problem for a generic, directed, weighted, sparse graphs
  * using two versions Dijkstra's algorithm.
  * 
- * @author CS 2420 course staff and ?
+ * @author CS 2420 course staff and Joey Sidwell and Daryn Smith
  * @version November 14, 2024
  */
 public class GraphUtility {
@@ -205,7 +205,15 @@ public class GraphUtility {
 			throw new IllegalArgumentException("There is no path between vertex " + startData + " and vertex " + startData + ".");
 		}
 
-		// TODO: add Javadoc comment.
+		/**
+		 * Determines the shortest weighted path from one vertex (starting vertex) to another
+		 * (ending vertex) in this graph, using Dijkstra's algorithm and a priority queue to keep track of
+		 * the vertex with the minimum distance from start.
+		 *
+		 * @param startData - data of the starting vertex
+		 * @param endData - data of the ending vertex
+		 * @return ordered list of data for the vertices that make up the shortest weighted path
+		 */
 		public List<Type> shortestWeightedPathWithPriorityQueue(Type startData, Type endData) {
 			Vertex<Type> startingVertex = vertices.get(startData);
 			if(startingVertex == null)
@@ -233,18 +241,6 @@ public class GraphUtility {
 
 			throw new IllegalArgumentException("There is no path between vertex " + startData + " and vertex " + startData + ".");
 		}
-
-		public static void main(String[] args) {
-
-		}
-		/**
-		 * Finds the shortest path from the startValue to the endValue, if it exists.
-		 *
-		 * @param startValue the value of the vertex from which to start the search
-		 * @param targetValue the value of the target vertex
-		 * @return the shortest path between startValue and endValue
-		 * @throws IllegalArgumentException if the Graph does not contain the start or target values
-		 */
 
 		/**
 		 * Generates an ordered list of data for the vertices that make up the path defined by 
