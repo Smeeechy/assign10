@@ -17,7 +17,13 @@ class BinaryMinHeapTest {
         heap.add(5);
         heap.add(2);
         heap.add(3);
-        assertEquals(2, heap.peek());
+        heap.add(7);
+        heap.add(1);
+        heap.add(10);
+        heap.add(4);
+        heap.add(0);
+
+        assertEquals(0, heap.peek());
     }
 
 

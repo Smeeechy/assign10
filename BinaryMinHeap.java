@@ -77,6 +77,7 @@ public class BinaryMinHeap<E> implements PriorityQueue<E> {
 
     /**
      * Places elements at correct position by iteratively comparing to parent
+     * recursively until structure is satisfied.
      *
      * @param index index of item to re-position
      */
@@ -86,6 +87,7 @@ public class BinaryMinHeap<E> implements PriorityQueue<E> {
         E parent = get(parent(index));
         if (parent != null && innerCompare(current, parent) < 0) {
             swap(index, parent(index));
+            percolateUp(parent(index));
         }
 
     }
@@ -182,8 +184,21 @@ public class BinaryMinHeap<E> implements PriorityQueue<E> {
      */
     @Override
     public void add(E element) {
+        if (size == array.length - 1) resize();
         array[++size] = element;
         percolateUp(size);
+    }
+
+    /**
+     * Utility method for resizing the backing array once the size is equal to the array length - 1
+     * Sets new backing array length to double the original array length
+     */
+    private void resize() {
+        Object[] oldEntries = array;
+        array = new Object[array.length * 2];
+        for (int i = 0; i < oldEntries.length; i++) {
+            array[i] = oldEntries[i];
+        }
     }
 
     /**
