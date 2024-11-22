@@ -29,14 +29,14 @@ public class BinaryMinHeap<E> implements PriorityQueue<E> {
     }
 
     public BinaryMinHeap(List<? extends E> list) {
-        this.array = new Object[list.size() * 2];
+        this.array = new Object[list.size() * 2 + 1];
         this.size = list.size();
         this.cmp = null;
         buildHeap(list);
     }
 
     public BinaryMinHeap(List<? extends E> list, Comparator<? super E> cmp) {
-        this.array = new Object[list.size() * 2];
+        this.array = new Object[list.size() * 2 + 1];
         this.size = list.size();
         this.cmp = cmp;
         buildHeap(list);
@@ -89,7 +89,6 @@ public class BinaryMinHeap<E> implements PriorityQueue<E> {
             swap(index, parent(index));
             percolateUp(parent(index));
         }
-
     }
 
     /**
@@ -227,7 +226,7 @@ public class BinaryMinHeap<E> implements PriorityQueue<E> {
         E min = get(1);
         array[1] = array[size];
         array[size--] = null;
-        percolateDown(1);
+        if (size > 0) percolateDown(1);
         return min;
     }
 
